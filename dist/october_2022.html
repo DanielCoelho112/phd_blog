@@ -33,17 +33,15 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+        <header class="masthead" style="background-image: url('assets/img/infrastructure.jpg')">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>Man must explore, and this is exploration at its greatest</h1>
-                            <h2 class="subheading">Problems look mighty small from 150 miles up</h2>
+                            <h1>Building the infrastructure: DeepLar and CARLA</h1>
+                            <h2 class="subheading">Building the infrastructure that will support the training and testing of autonomous driving systems.</h2>
                             <span class="meta">
-                                Posted by
-                                <a href="#!">Start Bootstrap</a>
-                                on August 24, 2022
+                                Posted on November 02, 2022
                             </span>
                         </div>
                     </div>
@@ -54,57 +52,109 @@
         <article class="mb-4">
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <p>Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory.</p>
-                        <p>Science cuts two ways, of course; its products can be used for both good and evil. But there's no turning back from science. The early warnings about technological dangers also come from science.</p>
-                        <p>What was most significant about the lunar voyage was not that man set foot on the Moon but that they set eye on the earth.</p>
-                        <p>A Chinese tale tells of some men sent to harm a young girl who, upon seeing her beauty, become her protectors rather than her violators. That's how I felt seeing the Earth for the first time. I could not help but love and cherish her.</p>
-                        <p>For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us.</p>
-                        <h2 class="section-heading">The Final Frontier</h2>
-                        <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-                        <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-                        <blockquote class="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
-                        <p>Spaceflights cannot be stopped. This is not the work of any one man or even a group of men. It is a historical process which mankind is carrying out in accordance with the natural laws of human development.</p>
-                        <h2 class="section-heading">Reaching for the Stars</h2>
-                        <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
-                        <a href="#!"><img class="img-fluid" src="assets/img/post-sample-image.jpg" alt="..." /></a>
-                        <span class="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
-                        <p>Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds, to seek out new life and new civilizations, to boldly go where no man has gone before.</p>
-                        <p>As I stand out here in the wonders of the unknown at Hadley, I sort of realize there’s a fundamental truth to our nature, Man must explore, and this is exploration at its greatest.</p>
-                        <p>
-                            Placeholder text by
-                            <a href="http://spaceipsum.com/">Space Ipsum</a>
-                            &middot; Images by
-                            <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>
+                    <p class="col-md-10 col-lg-8 col-xl-7">
+                        <p>This post marks the first month of working on my Ph.D. The initial work was employed on building the base hardware and software that will support the objectives of my Ph.D.
+                           Since we are going to build autonomous driving systems using deep learning and reinforcement learning, a computer specially tailored for these tasks is required. For that we will use <a href="https://github.com/lardemua/deep/">DeepLar</a>.
+                            On the software side, we will begin by training the agents in simulation, more precisely, in <a href="https://github.com/carla-simulator/carla">CARLA</a>. 
                         </p>
+                        
+                        
+                        <h2 class="section-heading">DeepLar</h2>
+
+                        <p>
+                            In the past months, DeepLar had two major problems: Failed boot due to NVIDIA persistenced daemon error (see issue <a href="https://github.com/lardemua/deep/issues/6">#6</a>), and GPU number 1 was often falling out of the bus (see issue <a href="https://github.com/lardemua/deep/issues/7">#7</a>).
+                            The first problem was solved by updating the OS and by enabling nvidia-persistenced. To fix the second problem, firsty I installed the most recent NVIDIA drivers but the problem remained unsolved. Apparently, the problem was the connection of the GPU and therefore a simple reseating solved the problem.
+                        </p>
+
+
+                        <p>
+                            With the hardware problems solved, I begin working on CARLA. We decided to install the server of the simulation in the DeepLar due to the excessive GPU memory required. For that I just build a docker container with the CARLA server and then made a port tunneling from the DeepLar to my computer.
+                            One problem that arouse is the high latency which was causing a laggy simulation (see issue  <a href="https://github.com/lardemua/deep/issues/8">#8</a>). To overcome this, I used a ethernet connection and the simulation was in real-time. Since DeepLar has only one ethernet port, we decided to buy a USB-ethernet conversor, which has not arrived yet.
+
+                        </p>
+
+                        <h2 class="section-heading">CARLA</h2>
+
+                        <p>
+                            Training reinforcement learning agents is commonly done using OpenAI gym environments. After seaching for an implementation of such environment using CARLA, I found the following <a href="https://github.com/zhejz/carla-roach">repository</a>.
+                            This repository contains a lot more than we need, so I looked through the code and extracted the parts that are of interest to us (issue <a href="https://github.com/DanielCoelho112/curlad/issues/1">#1</a>).
+                        </p>
+
+                        <p>
+                            Since we are going to experiment different agents, towns, scenarios, inputs, etc. it is mandatory to develop a scalabe and flexible framework. So I developed a framework based on YAML files that enable the creation of different experiments (issue <a href="https://github.com/DanielCoelho112/curlad/issues/2">#2</a>).
+                            To create a new experiment, there are three config files that must be written/adapted: 
+
+                        
+                            
+                            <ul>
+
+                                <li>obs_config.yaml: File with all sensors that the agent will use.</li>
+                                <li>policy.yaml: File with all the hyperparameters of the agent.</li>
+                                <li>train.yaml: File with all the configurations of the training, including the environment.</li>
+
+                            </ul>
+
+                        </p>
+
+                        <p>
+                            Once the config files are created, the training will be automatically configurated. This way we can save the config files and we have the complete information about the experiment, including the agent and the environment.
+                        </p>
+
+
+                        <p>
+                            In order to visualize what happened in the episodes of the training and testing, a HUD was developed (issue <a href="https://github.com/DanielCoelho112/curlad/issues/3">#3</a>).
+                            The goal of the HUD is to superimposed the video of the episode with critical information, such as the waypoints provided by the global planner, velocity, etc.
+                            Check the following <a href="https://uapt33090-my.sharepoint.com/:v:/g/personal/danielsilveiracoelho_ua_pt/EX0eJnUi8zdIsPlLzzGUZXoB_-KxRRQkxVIrfAYd1KHhOA?e=E1cYIA">example</a>.
+                        </p>
+
+                        <p>
+                            Besides the visual representation of each episode, we should also define each episode quantitatively. For that a folder with the stats of each episode was created (issue <a href="https://github.com/DanielCoelho112/curlad/issues/13">#13</a>). This folder contains a <a href="https://github.com/DanielCoelho112/curlad/files/9910027/episode_stats.csv">csv</a> file with some metrics per episode, such as reward, number of collisions, score, etc.
+                        </p>
+
+
+                        <h2 class="section-heading">What's Next?</h2>
+
+                        <p>
+                            For now, we have the infrastructure to develop and train the agents, but we are missing the testing part. The next efforts will be devoted to add the testing part to the current infrastructure.
+                            
+                        </p>
+                        <p>
+                            In addition, we will begin implementing a simple agent. The agent will be trained using Reinforcement Learning and consists of a RegNet as feature extractor and then a Soft Actor Critic (SAC). The inputs will be a single RGB camera, and the environment will contain a simple town with only straight tasks.
+                        </p>
+                        <p>
+                            Furthermore, I'm expecting to test the USB-ethernet conversor and configure the LogiTech steering wheel to work in CARLA.
+                        </p>
+
+
+
                     </div>
                 </div>
             </div>
         </article>
         <!-- Footer-->
-        <footer class="border-top">
+         <footer class="border-top">
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <ul class="list-inline text-center">
                             <li class="list-inline-item">
-                                <a href="#!">
+                                <a href="https://www.researchgate.net/profile/Daniel-Coelho-18">
                                     <span class="fa-stack fa-lg">
                                         <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                        <i class="fab fa-researchgate fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
                             </li>
                             <li class="list-inline-item">
-                                <a href="#!">
+                                <a href="https://www.linkedin.com/in/daniel-coelho-1aa44a1b2">
                                     <span class="fa-stack fa-lg">
                                         <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                        <i class="fab fa-linkedin-in fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
                             </li>
                             <li class="list-inline-item">
-                                <a href="#!">
+                                <a href="https://github.com/DanielCoelho112">
                                     <span class="fa-stack fa-lg">
                                         <i class="fas fa-circle fa-stack-2x"></i>
                                         <i class="fab fa-github fa-stack-1x fa-inverse"></i>

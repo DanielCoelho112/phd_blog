@@ -33,17 +33,15 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+        <header class="masthead" style="background-image: url('assets/img/intelligence.jpg')">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="col-md-10 col-lg-8 col-xl-9">
                         <div class="post-heading">
-                            <h1>Man must explore, and this is exploration at its greatest</h1>
-                            <h2 class="subheading">Problems look mighty small from 150 miles up</h2>
+                            <h1>Designing Reinforcement Learning Agents</h1>
+                            <h2 class="subheading">Development of techniques to improve the sample efficiency problem.</h2>
                             <span class="meta">
-                                Posted by
-                                <a href="#!">Start Bootstrap</a>
-                                on August 24, 2022
+                                Posted on December 06, 2022
                             </span>
                         </div>
                     </div>
@@ -54,57 +52,218 @@
         <article class="mb-4">
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <p>Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory.</p>
-                        <p>Science cuts two ways, of course; its products can be used for both good and evil. But there's no turning back from science. The early warnings about technological dangers also come from science.</p>
-                        <p>What was most significant about the lunar voyage was not that man set foot on the Moon but that they set eye on the earth.</p>
-                        <p>A Chinese tale tells of some men sent to harm a young girl who, upon seeing her beauty, become her protectors rather than her violators. That's how I felt seeing the Earth for the first time. I could not help but love and cherish her.</p>
-                        <p>For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us.</p>
-                        <h2 class="section-heading">The Final Frontier</h2>
-                        <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-                        <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-                        <blockquote class="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
-                        <p>Spaceflights cannot be stopped. This is not the work of any one man or even a group of men. It is a historical process which mankind is carrying out in accordance with the natural laws of human development.</p>
-                        <h2 class="section-heading">Reaching for the Stars</h2>
-                        <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
-                        <a href="#!"><img class="img-fluid" src="assets/img/post-sample-image.jpg" alt="..." /></a>
-                        <span class="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
-                        <p>Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds, to seek out new life and new civilizations, to boldly go where no man has gone before.</p>
-                        <p>As I stand out here in the wonders of the unknown at Hadley, I sort of realize there’s a fundamental truth to our nature, Man must explore, and this is exploration at its greatest.</p>
-                        <p>
-                            Placeholder text by
-                            <a href="http://spaceipsum.com/">Space Ipsum</a>
-                            &middot; Images by
-                            <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>
+                    <p class="col-md-10 col-lg-8 col-xl-7">
+                        <p>In this month, the work was mainly devoted to mitigating the sample efficiency problem of Reinforcement Learning. However, the first days were employed to integrate the LogiTech steering wheel and pedals in CARLA and fixing unexpected CARLA crashes. 
                         </p>
+                        
+                        <h2 class="section-heading">CARLA</h2>
+                        <p>
+                        <br>
+                        </p>  
+                        
+                        <h3>LogiTech</h3>
+                        <p>
+                            Since the main objective of this Ph.D. is the combination of Imitation Learning (IL) and Reinforcement Learning (RL), it is mandatory create an interface where the humans can provide the demonstrations. 
+                            For that, we integrated the LogitTech steering wheel and pedals in CARLA (issue <a href="https://github.com/lardemua/deep/issues/8">#8</a>):
+                        <br>
+                        </p>
+                        
+                                <video width="640" height="480" controls>
+                                <source src="assets/videos/steering_wheel.mp4" type="video/mp4">
+                                <source src="assets/videos/steering_wheel.ogg" type="video/ogg">
+                                Your browser does not support the video tag.
+                                </video>
+                        
+                        <p>
+                        <br>
+                        </p>   
+                        <h3>Unexpected CARLA Server crashes</h3>
+
+                        <p>
+                            
+                            After implementing all infrastructure related with CARLA, I tried to run a simple RL agent over 10^6 steps. However, the CARLA Server was crashing after 30/40k steps:
+                            
+                            <br>
+                            <br>
+
+                            <code>
+                            Signal 11 caught. <br>
+                            Malloc Size=65538 LargeMemoryPoolOffset=65554  <br>
+                            4.26.2-0+++UE4+Release-4.26 522 0 <br>
+                            Disabling core dumps. <br>
+                            CommonUnixCrashHandler: Signal=11 <br>
+                            Engine crash handling finished; re-raising signal 11 for the default handler. Good bye. <br>
+                            ./CarlaUE4.sh: line 5:    13 Segmentation fault      (core dumped) "$UE4_PROJECT_ROOT/CarlaUE4/Binaries/Linux/CarlaUE4-Linux-Shipping" CarlaUE4 "$@" <br>
+
+                            </code>
+                            
+                            <br>
+                            <br>
+
+                            After several unsuccessful attempts to find the the cause of the error, I downgraded CARLA version from 0.9.13 to 0.9.10.1 and the problem was solved (issue <a href="https://github.com/DanielCoelho112/curlad/issues/29">#29</a>).
+                            
+
+                        </p>
+
+
+                        <h2 class="section-heading">Reinforcement Learning</h2>
+                        <p>
+                        <br>
+                        </p>  
+                        
+                        <h3>Sample Efficiency</h3>
+                        <p>
+                            Reinforcement Learning is known to be sample inefficient, that is, it needs a lot of samples to learn. This problem is even more evident when using high dimensional inputs as is the case of images. A number of approaches have been proposed to mitigate this problem:
+                            <ol>
+                            <li>Data augmentation: <a href="https://arxiv.org/abs/2004.13649"><u>paper</u></a>  </li>
+                            <li>Auto Encoder <a href="https://arxiv.org/abs/1910.01741"><u>paper</u></a> </li>
+                            <li>Contrastive Learning <a href="https://arxiv.org/abs/2004.04136"><u>paper</u></a> </li>
+                            <li>DDPG with sigma decaying <a href="https://openreview.net/forum?id=_SJ-_yyes8"><u>paper</u></a> </li>
+                            </ol>
+                        </p>
+                        
+
+                        <p>
+                            These techniques are meant to be included in a generic architecture composed of an image encoder followed by a Deep RL algorithm.
+                            To start, I decided to implement RegNet as feature extractor and then Soft Actor Critic as the RL algorithm.
+                        </p>
+
+
+                        <h3>Regnet followed by SAC</h3>
+                        <br>
+                        <br>
+
+                        <p>
+                            The architecture of this agent is the following: <br>
+
+
+                            <img src="assets/img/regnet_sac.png" alt="" width="954" height="534" style="vertical-align:middle"> <br>
+                            
+                            The navigation command is a high-level indication provided by the global planner. Examples include "go straight" and "turn left". This information is conveyed into the network using one-hot encoding. 
+                            In the future, this will be replaced by a fully-conected network that receives the next n waypoints and outputs a feature vector of m elements.
+
+                            In addiction to the navigation comand, we are also taking in consideration 2 elements: current velocity normalized between 0 and 1, and the current steering angle.
+
+                        </p>
+
+
+                        <p>
+                            
+                            This system was tested in CARLA, and the results were embarassingly bad: <br>
+
+                                <video width="640" height="480" controls>
+                                <source src="assets/videos/not_moving.mp4" type="video/mp4">
+                                <source src="assets/videos/not_moving.ogg" type="video/ogg">
+                                Your browser does not support the video tag.
+                                </video> <br>
+
+                            
+                            <br>
+                                In the beggining, when the agent was more explorative than exploitive, the agent was testing all possible combination of outputs. The problem is that for the car to start to move, the throttle must be pressing during a few seconds while leaving the brake untouched. 
+                                And that combination was never tested.
+
+
+
+                        </p>
+
+
+                        <h3>RegNet followed by SAC with longitudinal controller</h3>
+                        <br>
+                        <br>
+                        
+                        <p>
+                        To overcome the trottle/brake issue, we decided to change the outputs of the agent to steering angle and predicted speed, and then implement a PID controller to convert the predicted speed into throttle and brake commands.
+
+                            <img src="assets/img/regnet_sac_controller.png" alt="" width="1130" height="530" style="vertical-align:middle"> <br>
+                        
+                        
+                        This change was sufficient to fix the throttle/brake issue, however, the performance of the agent was really bad. Couldn't even drive in straight roads.
+
+                        The reward plot was the following:
+
+                        <br><img src="assets/img/reward_regnet.png" alt="" width="640" height="480" style="vertical-align:middle"> <br>
+
+                        <br>
+
+                        And an example of the driving is the following: <br>
+
+                                <video width="640" height="480" controls>
+                                <source src="assets/videos/regnet_driving.mp4" type="video/mp4">
+                                <source src="assets/videos/regnet_driving.ogg" type="video/ogg">
+                                Your browser does not support the video tag.
+                                </video> <br>
+                            
+                                <br>
+                            After some research, I realized the problem was the number of parameters of RegNet (4 milion). In every paper I read, the maximum number of parameters of the encoder was 2M.
+                            </p>
+
+                        
+  
+                        <h3>Simple Encoder followed by SAC with longitudinal controller</h3>
+                        <br>
+                        <br>
+                        
+                        <p>
+                            
+                        To overcome the problem with the size of the encoder, I implemented a simple encoder with convolution layers (1 milion).
+                        The reward plot looks much better:
+
+                        <br><img src="assets/img/reward_simple_encoder.png" alt="" width="640" height="480" style="vertical-align:middle"> <br>
+
+                        And the driving was also much better: <br>
+
+                                <video width="640" height="480" controls>
+                                <source src="assets/videos/simple_encoder.mp4" type="video/mp4">
+                                <source src="assets/videos/simple_encoder.ogg" type="video/ogg">
+                                Your browser does not support the video tag.
+                                </video> <br>
+
+
+                        </p>
+
+
+                        <br>
+                        <br>
+
+                        <h3>Using Data Augmentation with previous agent</h3>
+                        <br>
+                        <br>
+
+
+
+                            oscilations...
+
+
+
+
                     </div>
                 </div>
             </div>
         </article>
         <!-- Footer-->
-        <footer class="border-top">
+         <footer class="border-top">
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <ul class="list-inline text-center">
                             <li class="list-inline-item">
-                                <a href="#!">
+                                <a href="https://www.researchgate.net/profile/Daniel-Coelho-18">
                                     <span class="fa-stack fa-lg">
                                         <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                        <i class="fab fa-researchgate fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
                             </li>
                             <li class="list-inline-item">
-                                <a href="#!">
+                                <a href="https://www.linkedin.com/in/daniel-coelho-1aa44a1b2">
                                     <span class="fa-stack fa-lg">
                                         <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                        <i class="fab fa-linkedin-in fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
                             </li>
                             <li class="list-inline-item">
-                                <a href="#!">
+                                <a href="https://github.com/DanielCoelho112">
                                     <span class="fa-stack fa-lg">
                                         <i class="fas fa-circle fa-stack-2x"></i>
                                         <i class="fab fa-github fa-stack-1x fa-inverse"></i>
@@ -123,4 +282,3 @@
         <script src="js/scripts.js"></script>
     </body>
 </html>
-

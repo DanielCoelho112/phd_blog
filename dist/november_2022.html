@@ -53,7 +53,8 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <p class="col-md-10 col-lg-8 col-xl-7">
-                        <p>In this month, the work was mainly devoted to mitigating the sample efficiency problem of Reinforcement Learning. However, the first days were employed to integrate the LogiTech steering wheel and pedals in CARLA and fixing unexpected CARLA crashes. 
+                        <p>In this month, the work was mainly devoted to mitigating the sample efficiency problem of Reinforcement Learning. 
+                            However, the first days were spent integrating the LogiTech steering wheel and pedals in CARLA and fixing unexpected crashes of the simulator. 
                         </p>
                         
                         <h2 class="section-heading">CARLA</h2>
@@ -63,8 +64,8 @@
                         
                         <h3>LogiTech</h3>
                         <p>
-                            Since the main objective of this Ph.D. is the combination of Imitation Learning (IL) and Reinforcement Learning (RL), it is mandatory create an interface where the humans can provide the demonstrations. 
-                            For that, we integrated the LogitTech steering wheel and pedals in CARLA (issue <a href="https://github.com/lardemua/deep/issues/8">#8</a>):
+                            Since the main objective of this Ph.D. is to combine Imitation Learning (IL) and Reinforcement Learning (RL), it is mandatory create an interface where the humans can provide the demonstrations. 
+                            For that, we integrated the LogitTech steering wheel and pedals in CARLA (issue <a href="https://github.com/DanielCoelho112/curlad/issues/6">#6</a>):
                         <br>
                         </p>
                         
@@ -77,8 +78,8 @@
                         <p>
                         <br>
                         </p>   
-                        <h3>Unexpected CARLA Server crashes</h3>
 
+                        <h3>Unexpected CARLA Server crashes</h3>
                         <p>
                             
                             After implementing all infrastructure related with CARLA, I tried to run a simple RL agent over 10^6 steps. However, the CARLA Server was crashing after 30/40k steps:
@@ -125,7 +126,7 @@
 
                         <p>
                             These techniques are meant to be included in a generic architecture composed of an image encoder followed by a Deep RL algorithm.
-                            To start, I decided to implement RegNet as feature extractor and then Soft Actor Critic as the RL algorithm.
+                            To start, I decided to implement RegNet as image encoder and then Soft Actor Critic as the deep RL algorithm.
                         </p>
 
 
@@ -149,7 +150,7 @@
 
                         <p>
                             
-                            This system was tested in CARLA, and the results were embarassingly bad: <br>
+                            This system was tested in CARLA, and the results were embarrassingly bad (issue <a href="https://github.com/DanielCoelho112/curlad/issues/17">#17</a>): <br>
 
                                 <video width="640" height="480" controls>
                                 <source src="assets/videos/not_moving.mp4" type="video/mp4">
@@ -159,11 +160,10 @@
 
                             
                             <br>
-                                In the beggining, when the agent was more explorative than exploitive, the agent was testing all possible combination of outputs. The problem is that for the car to start to move, the throttle must be pressing during a few seconds while leaving the brake untouched. 
-                                And that combination was never tested.
-
-
-
+                                
+                                The cause of this behavior was improper exploration. The exploration of the agent consists in generating random values for the throttle, steer and braking.
+                                However, by generating random values the car will never start moving because for the car to start to move, the throttle must be pressed for some seconds while leaving the brake untouched.
+                                
                         </p>
 
 
@@ -172,12 +172,19 @@
                         <br>
                         
                         <p>
-                        To overcome the trottle/brake issue, we decided to change the outputs of the agent to steering angle and predicted speed, and then implement a PID controller to convert the predicted speed into throttle and brake commands.
+                        To overcome the trottle/brake issue, we decided to change the outputs of the agent to steering angle and predicted speed, and then implement a PID controller to convert the predicted speed into throttle and brake commands (issue <a href="https://github.com/DanielCoelho112/curlad/issues/18">#18</a>).
+                        
+                        The architecture of the system was then change to: <br>
 
                             <img src="assets/img/regnet_sac_controller.png" alt="" width="1130" height="530" style="vertical-align:middle"> <br>
                         
-                        
-                        This change was sufficient to fix the throttle/brake issue, however, the performance of the agent was really bad. Couldn't even drive in straight roads.
+
+                        And the curve of the PID when setting desired speed to 6 m/s was the following (1 step = 0.1s):
+
+                        <img src="assets/img/pid_curve.png" alt="" width="640" height="480" style="vertical-align:middle"> <br>
+
+
+                        This change was sufficient to fix the throttle/brake issue, however, the performance of the agent was still bad. Couldn't even drive on straight roads.
 
                         The reward plot was the following:
 
@@ -194,7 +201,7 @@
                                 </video> <br>
                             
                                 <br>
-                            After some research, I realized the problem was the number of parameters of RegNet (4 milion). In every paper I read, the maximum number of parameters of the encoder was 2M.
+                            After some research, I realized the problem was the number of parameters of RegNet (4 milion). In every paper I read of Reinforcement Learning from pixels, the maximum number of parameters of the encoder was 1.5M.
                             </p>
 
                         
@@ -205,7 +212,7 @@
                         
                         <p>
                             
-                        To overcome the problem with the size of the encoder, I implemented a simple encoder with convolution layers (1 milion).
+                        To overcome the problem with the size of the encoder, I implemented a simple encoder with convolution layers - 1 million of parameters (issue <a href="https://github.com/DanielCoelho112/curlad/issues/20">#20</a>).
                         The reward plot looks much better:
 
                         <br><img src="assets/img/reward_simple_encoder.png" alt="" width="640" height="480" style="vertical-align:middle"> <br>
@@ -218,20 +225,31 @@
                                 Your browser does not support the video tag.
                                 </video> <br>
 
+                        <br>
+                        <br>
+
+                        This architecture will be referred to as the <b> baseline architecture </b> in this blog.
 
                         </p>
+                        
 
 
                         <br>
                         <br>
 
-                        <h3>Using Data Augmentation with previous agent</h3>
+                        <h3>Adding Data Augmentation to the baseline architecture</h3>
+                        <br>
+                        <br>
+
+                        <h3>Adding AutoEncoder to the baseline architecture</h3>
                         <br>
                         <br>
 
 
 
-                            oscilations...
+
+
+
 
 
 

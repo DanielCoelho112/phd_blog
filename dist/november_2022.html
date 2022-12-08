@@ -114,17 +114,17 @@
                         
                         <h3>Sample Efficiency</h3>
                         <p>
-                            Reinforcement Learning is known to be sample inefficient, that is, it needs a lot of samples to learn. This problem is even more evident when using high dimensional inputs as is the case of images. A number of approaches have been proposed to mitigate this problem:
+                            Reinforcement Learning is known to be sample inefficient, that is, it needs a lot of samples to learn. This problem is even more evident when using high dimensional inputs as is the case of images. A number of approaches have been proposed to mitigate this problem (sorted by ascending order of effectiveness):
                             <ol>
                             <li>Data augmentation: <a href="https://arxiv.org/abs/2004.13649"><u>paper</u></a>  </li>
-                            <li>Auto Encoder <a href="https://arxiv.org/abs/1910.01741"><u>paper</u></a> </li>
-                            <li>Contrastive Learning <a href="https://arxiv.org/abs/2004.04136"><u>paper</u></a> </li>
-                            <li>DDPG with sigma decaying <a href="https://openreview.net/forum?id=_SJ-_yyes8"><u>paper</u></a> </li>
+                            <li>Auto Encoder: <a href="https://arxiv.org/abs/1910.01741"><u>paper</u></a> </li>
+                            <li>Contrastive Learning: <a href="https://arxiv.org/abs/2004.04136"><u>paper</u></a> </li>
+                            <li>DDPG with sigma decaying: <a href="https://openreview.net/forum?id=_SJ-_yyes8"><u>paper</u></a> </li>
                             </ol>
                         </p>
                         
 
-                        <p>
+                        <p> 
                             These techniques are meant to be included in a generic architecture composed of an image encoder followed by a Deep RL algorithm.
                             To start, I decided to implement RegNet as image encoder and then Soft Actor Critic as the deep RL algorithm.
                         </p>
@@ -179,7 +179,7 @@
                             <img src="assets/img/regnet_sac_controller.png" alt="" width="1130" height="530" style="vertical-align:middle"> <br>
                         
 
-                        And the curve of the PID when setting desired speed to 6 m/s was the following (1 step = 0.1s):
+                        And the curve of the PID (kp=1.0, ki=0.2, kd=0.001) when setting desired speed to 6 m/s was the following (1 step = 0.1s):
 
                         <img src="assets/img/pid_curve.png" alt="" width="640" height="480" style="vertical-align:middle"> <br>
 
@@ -230,8 +230,27 @@
 
                         This architecture will be referred to as the <b> baseline architecture </b> in this blog.
 
-                        </p>
+                        The baseline architecture was then tested on Corl2017 benchmark in the navigation task:
                         
+                        
+                        <table>
+                            <tr>
+                                <th>Agent</th>
+                                <th>Score Route</th>
+                                <th>Score Penalty</th>
+                                <th>Score Composed</th>
+                            </tr>
+                            <tr>
+
+                                <td>Baseline</td>
+                                <td>0.27</td>
+                                <td>0.69</td>
+                                <td>0.19</td>
+                            </tr>
+                            </table>
+
+                        </p>
+        
 
 
                         <br>
@@ -241,11 +260,137 @@
                         <br>
                         <br>
 
+                        <p>
+                            Following this <a href="https://arxiv.org/abs/2004.13649"><u>paper</u></a>, everytime a batch size was sampled from the memory of the agent, a random crop was applied to the images (issue <a href="https://github.com/DanielCoelho112/curlad/issues/7">#7</a>).
+                            The authors claimed that this data augmentation serve as a regularizer, making the learning process more stable.
+                        </p>
+
+                        <p>
+                            The reward plot of this method was the following:
+
+                            <br><img src="assets/img/reward_augmented.png" alt="" width="640" height="480" style="vertical-align:middle"> <br>                            
+                            
+
+                            And now the performance on Corl2017-navigation:
+
+                            <table>
+                            <tr>
+                                <th>Agent</th>
+                                <th>Score Route</th>
+                                <th>Score Penalty</th>
+                                <th>Score Composed</th>
+                            </tr>
+                            <tr>
+
+                                <td>Baseline</td>
+                                <td>0.27</td>
+                                <td>0.69</td>
+                                <td>0.19</td>
+                            </tr>
+                            <tr>
+
+                                <td>Augmentation</td>
+                                <td>0.24</td>
+                                <td>0.67</td>
+                                <td>0.17</td>
+                            </tr>
+                            </table>
+
+                        </p> 
+                        <br>
+                        
+                        <p>
+                        The results using Augmentation are worse than our baseline, which could indicate that this data augmentation technique is not suitable for autonomous driving, or that the data augmentation in general does not have much impact on autonomous driving.
+
+                        </p>
+
+
+
                         <h3>Adding AutoEncoder to the baseline architecture</h3>
                         <br>
                         <br>
 
+                        <p>
+                            Following this <a href="https://arxiv.org/abs/1910.01741"><u>paper</u></a>, I implemented an AutoEncoder as an additional loss to force the compact representation of the images to contain relevant information about the image itself (issue <a href="https://github.com/DanielCoelho112/curlad/issues/23">#23</a>).
+                            The architecture is the following:
 
+                            <br><img src="assets/img/auto_encoder.png" alt="" width="1141" height="627" style="vertical-align:middle"> <br>      
+
+
+                        </p>
+
+                        <p>
+                            Once the training was over, I gave the following image to the system: <br>
+
+                            <br><img src="assets/img/initial_ae.png" alt="" width="224" height="224" style="vertical-align:middle"> <br> <br>
+
+                            And the reconstructed image was the following: <br>
+
+                            <br><img src="assets/img/reconstructed_ae.png" alt="" width="224" height="224" style="vertical-align:middle"> <br> 
+
+
+
+                        </p>
+
+
+                        <p>
+                            The reward plot is the following:
+
+                            <br><img src="assets/img/reward_ae.png" alt="" width="640" height="480" style="vertical-align:middle"> <br> 
+                        </p>
+
+                        <p>
+                            And the performace is:
+
+
+                            <table>
+                            <tr>
+                                <th>Agent</th>
+                                <th>Score Route</th>
+                                <th>Score Penalty</th>
+                                <th>Score Composed</th>
+                            </tr>
+                            <tr>
+
+                                <td>Baseline</td>
+                                <td>0.27</td>
+                                <td>0.69</td>
+                                <td>0.19</td>
+                            </tr>
+                            <tr>
+
+                                <td>Augmentation</td>
+                                <td>0.24</td>
+                                <td>0.67</td>
+                                <td>0.17</td>
+                            </tr>
+                            <tr>
+
+                                <td>AutoEncoder</td>
+                                <td>0.21</td>
+                                <td>0.67</td>
+                                <td>0.15</td>
+                            </tr>
+                            </table>
+
+                        </p>
+
+
+                        <p>
+                            And once again, the results are worse than the baseline. There are some examples in the literature that claim that the reconstruction of the input image alone is insufficient to improve the performance of the agent.
+                            In autonomous driving, it is common to reconstruct the segmented image instead of the raw image, which is something I expect to test in the future.
+
+                        </p>
+
+                        <h2 class="section-heading">What's Next?</h2>
+
+                        <p>
+                            In the next month I'll continue working on implementing techniques to improve the sample efficiency, namely: contrastive learning and DDPG with sigma decaying.
+                            
+                        </p>
+                        <p>
+                            In addition, I expect to introduce temporal information into the system using two different approaches: a) by concatenating the different images and b) by using recurrent networks.
+                        </p>
 
 
 

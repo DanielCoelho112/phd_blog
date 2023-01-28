@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Daniel Coelho - Ph.D. Blog</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="about.html">About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/intelligence.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-9">
+                        <div class="post-heading">
+                            <h1>Designing Reinforcement Learning Agents</h1>
+                            <h2 class="subheading">Building the first autonomous driving agent trained with end-to-end reinforcement learning from pixels that succeeds in urban environments.</h2>
+                            <span class="meta">
+                                Posted on January 27, 2022
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <p class="col-md-10 col-lg-8 col-xl-7">
+                        <p> In these months, I realized that all papers that proposed agents trained with end-to-end RL weren't in fact end-to-end. They separate the perception training from the planning, which misclassifies them as end-to-end.
+                            
+                            Based on the work from the previous months, I think we can be the first proposing an agent that can drive in complex urban environments training with end-to-end RL.
+
+                            The common approach, is to use larget image encoders (ResNet, Inception) and train the perception module separately using a giant dataset. Then they use the compact image representation as the RL state, and train the RL algorithm.
+                            To avoid training the perception separately, we have to reduce the size of the image encoder due to the weak sign of the RL loss.
+                            
+                            <br>
+                            <br>
+
+                            Based on the results from November 2022, we can conclude that reducing the size of the encoder is not enough, and therefore additional training techniques are required.
+                            
+                            <br>
+                            <br>
+                            The rest of the blog contains techniques that were tested, as well as the main conclusions.
+                        </p>
+                        
+                        
+
+                        <h3>Deep Deterministic Policy Gradient (DDPG) with augmented data</h3>
+                        <p>
+                            
+                            Paper: <a href="https://arxiv.org/abs/2004.13649"><u>Mastering Visual Continuous Control: Improved Data-Augmented Reinforcement Learning</u></a>
+                            <br>
+                            <br>
+                            This paper replaces the Soft Actor Critic (SAC) by the Deep Deterministic Policy Gradient (DDPG) RL algorithm, and also changes the exploration behaviour.
+                            With this paper, the exploration is added using a gaussian distribution using the mean of the policy, and a sigma value that will linearly decay over time. Using this sigma, we have more control over the exploration, which is the main limitation of SAC.
+
+                            Changing from SAC to DDPG led to faster and more effective learning:
+
+
+                            <br>
+                            <br>
+
+                            <b>SAC</b>
+                            <img src="assets/img/SAC_training.png" alt="" width="640" height="480" style="vertical-align:middle"> <br>
+
+                            <br>
+                            <br>
+                            
+                            <b>DDPG</b>
+                            <img src="assets/img/DDPG_train.png" alt="" width="640" height="480" style="vertical-align:middle"> <br>
+
+                            
+                            <br>
+                            <br>
+
+                            Now, based on the videos, the problem to solve is the intersections.
+
+                        </p>
+
+                        <h3>Waypoint encoder as a neural network</h3>
+                        <p>
+                            Instead of giving a navigation command to the agent, we can give the next 10 waypoints from the global planner, and then encode that information in the state using a neural network:
+
+
+                            <br>
+                            <br>
+
+                            <img src="assets/img/DDPG_waypoint.png" alt="" width="1095" height="506" style="vertical-align:middle"> <br>
+
+                            <br>
+                            <br>
+
+                                <video width="640" height="480" controls>
+                                <source src="assets/videos/waypoint_linear_encoder.mp4" type="video/mp4">
+                                <source src="assets/videos/waypoint_linear_encoder.ogg" type="video/ogg">
+                                Your browser does not support the video tag.
+                                </video> <br>
+
+                            
+                            <br>
+                            <br>
+
+
+
+                        </p>
+
+                        
+
+                        <h3>Traffic Lights</h3>
+                        <p>
+                            The main problem now is the traffic lights. The traffic lights occupy about 25 pixels in the image, and the agent struggles to associate those pixels with the punishment received when moving through a red light.
+
+                            To force the latent representation of the image to containg traffic light features, a classification traffic light decoder was created:
+
+                            
+
+                            <img src="assets/img/tl_decoder.png" alt="" width="1094" height="593" style="vertical-align:middle"> <br>
+
+
+
+                            Although this helped, this alone wasn't sufficient. After some failed experiments, I found that using the same learning rate for all networks wasn't ideal.
+                            All authors are using the same learning rate for encoder, critic, and actor. However, the task of the encoder and the critic is much more complex than the task of the actor.
+                            The actor is only maximizing the critic, whereas the encoder is learning to represent the images and the critic is solving the bellman equation. Based on this, I found that using a smaller learning rate for the actor (1e-4) and a bigger learning rate for the critic and encoder (1e-3) led to better results.
+
+                            In addition, I also implemented a method to regularize the encoder's gradients (<a href="https://arxiv.org/pdf/2207.00986"><u>Stabilizing Off-Policy Deep Reinforcement Learning from Pixels</u></a>).
+
+                            The combination of all this features, led to the following results:
+
+
+                            <br>
+                            <br>
+
+                                <video width="640" height="480" controls>
+                                <source src="assets/videos/tl_working.mp4" type="video/mp4">
+                                <source src="assets/videos/tl_working.ogg" type="video/ogg">
+                                Your browser does not support the video tag.
+                                </video> <br>
+
+
+                        <h3>Failed attempts</h3>
+                            <br>
+                            <br>
+
+                        <p>
+                        Here I present a list of the aprroaches that I implemented and didn't worked out.
+
+                            <ol>
+                            <li>Using image encoders with attention: <a href="https://arxiv.org/pdf/1804.02391.pdf"><u>paper</u></a>  </li>
+                            <li>Using visual transfromers as image encoders: <a href="https://arxiv.org/abs/2010.11929"><u>paper</u></a> </li>
+                            <li>Bisimulation Learning: <a href="https://arxiv.org/abs/2006.10742"><u>paper</u></a> </li>
+                            <li>Critic with dropouts: <a href="https://openreview.net/forum?id=xCVJMsPv3RT"><u>paper</u></a> </li>
+                            <li>Using supervised learning on the predicted speed</li>
+                            </ol>
+                    
+                        <h2 class="section-heading">What's Next?</h2>
+
+                        <p>
+                            Train our approach in an environment with vehicles and pedestrians.
+                            Train all approaches that are end-to-end RL to compare with. These approaches are: SAC, SAC+AE, CURL, DRQ, DRQV2, ALIX.
+                            
+                        </p>
+
+                        <p>
+                            In addition, implement the following new features:
+                            <ol>
+                            <li>LSTMs to process temporal information </li>
+                            <li>Waypoint encoder using convolution layers </li>
+                            <li>Prioritized experience replay </li>
+                            <li>Auto Encoder</li>                            
+                            <li>Contrastive Learning</li>                            
+                            <li>Decoder to predict the distance to the next vehicle</li>                            
+                            </ol>
+
+
+                        </p>
+     
+
+
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+         <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.researchgate.net/profile/Daniel-Coelho-18">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-researchgate fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://www.linkedin.com/in/daniel-coelho-1aa44a1b2">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-linkedin-in fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/DanielCoelho112">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; Your Website 2022</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
